@@ -1,0 +1,17 @@
+.message{
+    padding: 10px;
+    width: fit-content;
+    align-self: flex-start;
+    margin: 10px;
+}
+.message__user{
+    align-self: flex-end;
+    color: white !important;
+}
+.message__guestCard{
+     background-color: rgba(203,203,203,0.6) !important;
+}
+.message__userCard{
+    background-color: rgba(0,0,255,0.6) !important;
+    color: white !important;
+}

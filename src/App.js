@@ -1,58 +1,54 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import React, {createRef, useEffect, useState} from 'react';
 import './App.css';
+import db from "./firebase/Firebase";
+import Button from "@material-ui/core/Button"
+import firebase from "firebase"
+import FormControl from "@material-ui/core/FormControl";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import {Message} from "./message/Message";
+import FlipMove from "react-flip-move";
 
 function App() {
-  return (
+    const [username, setUsername] = useState('')
+    const [input, setInput] = useState('')
+    const [messages, setMessages] = useState([])
+    useEffect(() => {
+        setUsername(prompt('Enter your username'))
+        setInput('')
+        db.collection('messages')
+            .orderBy('timestamp', 'desc')
+            .onSnapshot(snapshot => {
+          setMessages(snapshot.docs.map(doc => doc.data()))
+        })
+    }, [])
+    const handleSendMessage = (e) => {
+        e.preventDefault()
+        db.collection('messages').add({
+          username: username,
+          message: input,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        setInput('')
+    }
+
+    return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+        <FlipMove>
+            {
+                messages.map(message=>(
+                    <Message ref={createRef()} username={username} message={message} />
+                ))
+            }
+        </FlipMove>
+
+        <FormControl className={'app__formInput'}>
+          <InputLabel>Type your message</InputLabel>
+          <Input value={input} onChange={e=>setInput(e.target.value)} />
+          <Button disabled={!input} onClick={handleSendMessage} variant="contained" color="primary">Send Message</Button>
+        </FormControl>
     </div>
-  );
+    );
 }
 
 export default App;

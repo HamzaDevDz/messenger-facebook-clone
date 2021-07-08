@@ -1,4 +1,4 @@
-import React, {createRef, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import db from "./firebase/Firebase";
 import Button from "@material-ui/core/Button"
@@ -10,18 +10,21 @@ import {Message} from "./message/Message";
 import FlipMove from "react-flip-move";
 
 function App() {
+
     const [username, setUsername] = useState('')
     const [input, setInput] = useState('')
     const [messages, setMessages] = useState([])
+
     useEffect(() => {
         setUsername(prompt('Enter your username'))
         setInput('')
         db.collection('messages')
             .orderBy('timestamp', 'desc')
             .onSnapshot(snapshot => {
-          setMessages(snapshot.docs.map(doc => doc.data()))
+          setMessages(snapshot.docs.map(doc => ({id: doc.id, message: doc.data()}) ))
         })
     }, [])
+
     const handleSendMessage = (e) => {
         e.preventDefault()
         db.collection('messages').add({
@@ -34,10 +37,10 @@ function App() {
 
     return (
     <div className="App">
-        <FlipMove>
+        <FlipMove className={'app__messages'}>
             {
-                messages.map(message=>(
-                    <Message ref={createRef()} username={username} message={message} />
+                messages.map((message)=>(
+                    <Message key={message.id} username={username} message={message.message} />
                 ))
             }
         </FlipMove>
@@ -45,7 +48,7 @@ function App() {
         <FormControl className={'app__formInput'}>
           <InputLabel>Type your message</InputLabel>
           <Input value={input} onChange={e=>setInput(e.target.value)} />
-          <Button disabled={!input} onClick={handleSendMessage} variant="contained" color="primary">Send Message</Button>
+          <Button type={'submit'} disabled={!input} onClick={handleSendMessage} variant="contained" color="primary">Send Message</Button>
         </FormControl>
     </div>
     );

@@ -15,7 +15,7 @@ export const Message = forwardRef(({username, message}, ref) => {
     }
 
     return(
-        <div key={ref} className={`message ${setClass()}`}>
+        <div ref={ref} className={`message ${setClass()}`}>
             <Card className={isUSer ? 'message__userCard' : 'message__guestCard'}>
                 <CardContent>
                     <Typography color="textSecondary">

@@ -19,7 +19,7 @@ export const Message = forwardRef(({username, message}, ref) => {
             <Card className={isUSer ? 'message__userCard' : 'message__guestCard'}>
                 <CardContent>
                     <Typography color="textSecondary">
-                        {message.username} :
+                        {isUSer ? undefined : message.username === null ? 'Unknown says :' : message.username + ' :'}
                     </Typography>
                     <Typography
                         variant={'h5'}

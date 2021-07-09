@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import './App.css';
 import db from "./firebase/Firebase";
-import Button from "@material-ui/core/Button"
 import firebase from "firebase"
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import {Message} from "./message/Message";
 import FlipMove from "react-flip-move";
+import SendSharpIcon from '@material-ui/icons/SendSharp';
+import IconButton from "@material-ui/core/IconButton";
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
 
     const handleSendMessage = (e) => {
         e.preventDefault()
+        window.scrollTo({top:0, left:0, behavior: 'smooth'});
         db.collection('messages').add({
           username: username,
           message: input,
@@ -37,6 +39,12 @@ function App() {
 
     return (
     <div className="App">
+
+        <div className={'app__logoMessenger'}>
+            <img src={'./messenger_logo.png'} alt={'Messenger_Logo'} />
+            <h1>Messenger Facebook Clone</h1>
+        </div>
+
         <FlipMove className={'app__messages'}>
             {
                 messages.map((message)=>(
@@ -44,12 +52,20 @@ function App() {
                 ))
             }
         </FlipMove>
+        <form className={'app__form'}>
+            <FormControl className={'app__formControl'}>
+                <InputLabel>Type your message</InputLabel>
+                <Input className={'app__formControl__input'} value={input} onChange={e=>setInput(e.target.value)} />
+                <IconButton type="submit" disabled={!input}
+                            onClick={handleSendMessage} className={'app__formControl__btn'}
+                            variant="contained"
+                            color="primary"
+                >
+                    <SendSharpIcon/>
+                </IconButton>
+            </FormControl>
+        </form>
 
-        <FormControl className={'app__formInput'}>
-          <InputLabel>Type your message</InputLabel>
-          <Input value={input} onChange={e=>setInput(e.target.value)} />
-          <Button type={'submit'} disabled={!input} onClick={handleSendMessage} variant="contained" color="primary">Send Message</Button>
-        </FormControl>
     </div>
     );
 }
